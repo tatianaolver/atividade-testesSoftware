@@ -55,4 +55,24 @@ public class ClienteTest {
 
         assertFalse(carroMock.isDisponivel(), "O carro não deve estar disponível após ser reservado.");
     }
+
+    @Test
+    public void fazerReservaCarroInexistente() {
+        Carro carroMock = null; // Simula um carro inexistente
+
+        Locacao locacao = cliente.fazerReserva(carroMock, LocalDate.now(), LocalDate.now().plusDays(3));
+
+        assertNull(locacao, "A reserva deve falhar para um carro inexistente.");
+    }
+
+    @Test
+    public void verificarCarroDisponivelAposFalhaNaReserva() {
+        Carro carroMock = null; // Simula um carro inexistente
+
+        Locacao locacao = cliente.fazerReserva(carroMock, LocalDate.now(), LocalDate.now().plusDays(3));
+
+        assertNull(locacao, "A reserva deve falhar para um carro inexistente.");
+        // Neste caso, o status de disponibilidade do carro não deve ser afetado.
+        verify(carroMock, never()).reservar();
+    }
 }

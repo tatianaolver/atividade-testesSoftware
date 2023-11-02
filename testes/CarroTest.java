@@ -53,4 +53,38 @@ public class CarroTest {
 
         assertFalse(carro.isDisponivel(), "O carro não deve estar disponível após ser reservado.");
     }
+    @Test
+    public void verificarCarroDisponivelAposCancelamentoReserva() {
+        when(clienteMock.getNome()).thenReturn("ClienteTest");
+
+        Locacao locacao = carro.fazerReserva(clienteMock, LocalDate.now(), LocalDate.now().plusDays(3));
+        carro.cancelarReserva(locacao);
+
+        assertTrue(carro.isDisponivel(), "O carro deve estar disponível após o cancelamento de reserva.");
+    }
+
+    @Test
+    public void verificarPrecoTotalDaReserva() {
+        when(clienteMock.getNome()).thenReturn("ClienteTest");
+    
+        LocalDate dataInicio = LocalDate.now();
+        LocalDate dataFim = LocalDate.now().plusDays(5);
+
+        Locacao locacao = carro.fazerReserva(clienteMock, dataInicio, dataFim);
+
+        double precoEsperado = carro.getDiaria() * (dataFim.getDayOfYear() - dataInicio.getDayOfYear());
+        assertEquals(precoEsperado, locacao.getPrecoTotal(), 0.001, "O preço total da reserva deve ser calculado corretamente.");
+    }
+
+    @Test
+    public void verificarReservaComDatasInvalidas() {
+        when(clienteMock.getNome()).thenReturn("ClienteTest");
+
+        LocalDate dataInicio = LocalDate.now();
+        LocalDate dataFim = LocalDate.now().minusDays(2);
+
+        Locacao locacao = carro.fazerReserva(clienteMock, dataInicio, dataFim);
+
+        assertNull(locacao, "A reserva deve falhar para datas de início e término inválidas.");
+    }
 }
